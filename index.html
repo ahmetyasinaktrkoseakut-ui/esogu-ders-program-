@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ogubs1.ogu.edu.tr/DersSecim.aspx | ESOGÜ Ders Kayıt Ekranı</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏛️</text></svg>">
+  <style>
+/* ESOGÜ ÖBS (ogubs1.ogu.edu.tr/DersSecim.aspx) Birebir Resmi Tasarım */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body, html {
+  font-family: Arial, Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 11px;
+  background-color: #ffffff;
+  color: #333333;
+  width: 100%;
+  height: 100%;
+}
+
+/* ÜST BİLGİ VE PROFİL ŞERİDİ */
+.obs-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 10px;
+  background: #fdfdfd;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 11px;
+}
+
+.obs-top-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.obs-icon-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid #888;
+  font-size: 9px;
+  font-weight: bold;
+  color: #666;
+}
+
+.obs-odenec-text {
+  color: #555555;
+  font-size: 11px;
+}
+
+.obs-sep {
+  color: #ccc;
+}
+
+.obs-select-mini {
+  font-size: 11px;
+  padding: 2px 4px;
+  border: 1px solid #aaa;
+  border-radius: 2px;
+  background: #fff;
+  color: #222;
+  outline: none;
+}
+
+.obs-top-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-obs-messages {
+  background: #28a745;
+  color: #ffffff;
+  border: 1px solid #1e7e34;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 3px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.btn-obs-messages:hover {
+  background: #218838;
+}
+
+/* ANA 2 SÜTUNLU TABLO YERLEŞİMİ (ÖBS BİREBİR) */
+.obs-container {
+  display: flex;
+  width: 100%;
+  padding: 8px;
+  gap: 12px;
+}
+
+.obs-col-left {
+  width: 48%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.obs-col-right {
+  width: 52%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* KUTU BAŞLIKLARI (AÇILAN DERSLER, BAŞARISIZ DERSLER vb.) */
+.obs-section-title {
+  color: #555555;
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.obs-dept-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.obs-select-dept {
+  font-size: 10px;
+  padding: 2px 4px;
+  border: 1px solid #bbb;
+  background: #fafafa;
+  color: #444;
+  width: 220px;
+}
+
+.obs-radios-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.obs-radios-list {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+}
+
+.obs-radios-list label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.btn-obs-cyan {
+  background: #33b5e5;
+  color: #ffffff;
+  border: 1px solid #0099cc;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 3px 10px;
+  border-radius: 2px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-obs-cyan:hover {
+  background: #0099cc;
+}
+
+.obs-search-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+.obs-search-input {
+  width: 190px;
+  font-size: 11px;
+  padding: 2px 6px;
+  border: 1px solid #aaa;
+  outline: none;
+}
+
+/* TABLOLAR - KIRMIZI ÇİZGİLİ ÖBS HEADER */
+.obs-table-box {
+  width: 100%;
+  border: 1px solid #cccccc;
+  overflow-x: auto;
+  background: #ffffff;
+}
+
+.obs-selected-box {
+  width: 100%;
+  border: 1px solid #cccccc;
+  background: #ffffff;
+  min-height: 80px;
+  max-height: 280px;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+.obs-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10.5px;
+  white-space: nowrap;
+}
+
+.obs-data-table thead th {
+  background: #ffffff;
+  color: #333333;
+  font-weight: bold;
+  padding: 3px 4px;
+  text-align: left;
+  border-bottom: 2px solid #cc0000; /* ÖBS kırmızı alt çizgisi */
+  border-right: 1px solid #e0e0e0;
+}
+
+.obs-data-table tbody td {
+  padding: 3px 4px;
+  border-bottom: 1px solid #e8e8e8;
+  border-right: 1px solid #f0f0f0;
+  vertical-align: middle;
+}
+
+.obs-data-table tbody tr {
+  cursor: pointer;
+}
+
+.obs-data-table tbody tr:hover {
+  background-color: #f7f7f7;
+}
+
+/* SEÇİLEN SATIR GRİ BOYAMA (PDF Sayfa 12 Kuralı) */
+.obs-data-table tbody tr.obs-row-selected {
+  background-color: #cccccc !important;
+  color: #000000 !important;
+  font-weight: bold;
+}
+
+.obs-data-table tbody tr.obs-row-selected td {
+  border-color: #bbbbbb;
+}
+
+.obs-center {
+  text-align: center;
+}
+
+/* BAŞARISIZ DERSLER PANELİ */
+.obs-failed-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.obs-failed-radios {
+  display: flex;
+  gap: 10px;
+  font-size: 11px;
+}
+
+/* SAĞ PANEL: ANADAL İÇİN SEÇİLEN DERSLER */
+.obs-selected-stats {
+  font-size: 11px;
+  color: #444;
+  margin-bottom: 4px;
+}
+
+.obs-selected-stats strong {
+  color: #000;
+}
+
+.btn-trash-sil {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  color: #d9534f;
+  padding: 0 2px;
+}
+
+.obs-group-box {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  background: #28a745;
+  border-radius: 2px;
+  vertical-align: middle;
+}
+
+.obs-action-panel {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-top: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.btn-action-primary {
+  background: #33b5e5;
+  color: #ffffff;
+  border: 1px solid #0099cc;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 4px 12px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.btn-action-primary:hover {
+  background: #0099cc;
+}
+
+.btn-action-gray {
+  background: #f8f9fa;
+  color: #333;
+  border: 1px solid #ccc;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.btn-action-gray:hover {
+  background: #e2e6ea;
+}
+
+/* DERS PROGRAMI HAFTALIK MATRİS (PDF Sayfa 13 Kuralı) */
+.obs-timetable-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10.5px;
+  table-layout: fixed;
+}
+
+.obs-timetable-table thead th {
+  background: #ffffff;
+  color: #333333;
+  font-weight: bold;
+  padding: 3px 2px;
+  text-align: center;
+  border-bottom: 2px solid #cc0000;
+  border-right: 1px solid #e0e0e0;
+}
+
+.obs-timetable-table tbody td {
+  border: 1px solid #e0e0e0;
+  height: 22px;
+  text-align: center;
+  vertical-align: middle;
+  padding: 1px;
+  background: #ffffff;
+  font-size: 10px;
+}
+
+.obs-timetable-table tbody td.time-col {
+  background: #ffffff;
+  color: #555555;
+  font-weight: normal;
+  border-right: 1px solid #cccccc;
+  width: 48px;
+}
+
+/* RESMİ ÖBS YEŞİL HÜCRELERİ (PDF Sayfa 13: #90ee90 / #86efac) */
+.obs-timetable-table tbody td.cell-placed-green {
+  background-color: #90ee90 !important;
+  color: #006600 !important;
+  font-weight: bold;
+  border: 1px solid #5cd65c !important;
+  cursor: pointer;
+}
+
+.obs-timetable-table tbody td.cell-placed-green:hover {
+  background-color: #7ce47c !important;
+}
+
+/* MODALLAR */
+.obs-modal-back {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.45);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.obs-modal-back.show {
+  display: flex;
+}
+
+.obs-modal-box {
+  background: #fff;
+  border: 1px solid #888;
+  box-shadow: 0 6px 25px rgba(0,0,0,0.35);
+  width: 620px;
+  max-width: 95vw;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 4px;
+}
+
+.obs-modal-head {
+  padding: 8px 14px;
+  background: #f1f5f9;
+  border-bottom: 1px solid #cbd5e1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  font-size: 12px;
+  color: #1e293b;
+}
+
+.obs-modal-content {
+  padding: 14px;
+  overflow-y: auto;
+}
+
+.obs-modal-foot {
+  padding: 8px 14px;
+  background: #f8fafc;
+  border-top: 1px solid #cbd5e1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* SAĞ KENARDA SABİT DURAN KILAVUZ BUTONU */
+.floating-guide-btn {
+  position: fixed;
+  top: 45%;
+  right: 0;
+  transform: translateY(-50%);
+  z-index: 990;
+  background: #0284c7;
+  color: #ffffff;
+  border: 1px solid #0369a1;
+  border-right: none;
+  padding: 10px 14px;
+  border-radius: 8px 0 0 8px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: -3px 3px 12px rgba(0,0,0,0.25);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.floating-guide-btn:hover {
+  background: #0369a1;
+  padding-right: 18px;
+}
+
+/* KILAVUZ KARTLARI */
+.guide-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  border-left: 4px solid #0284c7;
+}
+
+.guide-card-title {
+  font-weight: bold;
+  font-size: 12px;
+  color: #0f172a;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.guide-card-desc {
+  color: #475569;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+/* MOBİL VE TABLET UYUMLULUK (RESPONSIVE) */
+@media screen and (max-width: 920px) {
+  .obs-container {
+    flex-direction: column !important;
+    padding: 6px !important;
+    gap: 14px !important;
+  }
+  .obs-col-left, .obs-col-right {
+    width: 100% !important;
+  }
+  .obs-top-bar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+    padding: 8px 10px !important;
+  }
+  .obs-top-left {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+  .obs-top-right {
+    justify-content: flex-end !important;
+  }
+  .obs-radios-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+  }
+  .obs-search-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 6px !important;
+  }
+  .obs-search-input {
+    width: 100% !important;
+    max-width: none !important;
+  }
+  .obs-table-box, .obs-selected-box {
+    max-height: 280px !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  .obs-action-panel {
+    justify-content: stretch !important;
+  }
+  .obs-action-panel button {
+    flex: 1 1 45% !important;
+    text-align: center !important;
+    padding: 6px 4px !important;
+  }
+  .floating-guide-btn {
+    top: auto !important;
+    bottom: 18px !important;
+    right: 14px !important;
+    transform: none !important;
+    border-radius: 20px !important;
+    padding: 8px 14px !important;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.3) !important;
+  }
+  .obs-modal-box {
+    width: 96vw !important;
+    max-height: 92vh !important;
+  }
+}
+
+/* YAZDIRMA (PRINT / PDF) */
+@media print {
+  .obs-top-bar, .obs-col-left, .obs-action-panel, .obs-modal-back, .floating-guide-btn {
+    display: none !important;
+  }
+  .obs-container {
+    display: block !important;
+    width: 100% !important;
+    padding: 0 !important;
+  }
+  .obs-col-right {
+    width: 100% !important;
+  }
+  .obs-table-box, .obs-selected-box {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    border: 1px solid #cccccc !important;
+  }
+  .obs-data-table {
+    width: 100% !important;
+    white-space: normal !important;
+  }
+  .obs-timetable-table tbody td.cell-placed-green {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    background-color: #90ee90 !important;
+  }
+}
+
+  </style>
+</head>
+<body>
+
+  <!-- Sağ Kenarda Sabit Kılavuz Butonu -->
+  <button id="btnFloatingGuide" class="floating-guide-btn" title="Kullanım Kılavuzunu Aç">
+    <span>📖</span>
+    <span>Kılavuz</span>
+  </button>
+
+  <!-- Üst ÖBS Bilgi ve Profil Şeridi -->
+  <div class="obs-top-bar">
+    <div class="obs-top-left">
+      <span class="obs-icon-circle">i</span>
+      <span class="obs-odenec-text">Ödenecek: 1 Ödenen: 0</span>
+      <span class="obs-sep">|</span>
+      <span><strong>Sınıf:</strong></span>
+      <select id="selectGrade" class="obs-select-mini">
+        <option value="1">1. Sınıf</option>
+        <option value="2">2. Sınıf</option>
+        <option value="3" selected>3. Sınıf</option>
+        <option value="4">4. Sınıf</option>
+      </select>
+      <span><strong>Öğretim:</strong></span>
+      <select id="selectTeachingType" class="obs-select-mini">
+        <option value="ALL" selected>Tümü (1. ve 2. Öğretim)</option>
+        <option value="1. Öğretim">1. Öğretim</option>
+        <option value="2. Öğretim">2. Öğretim</option>
+      </select>
+      <span><strong>Cinsiyet:</strong></span>
+      <select id="selectGender" class="obs-select-mini" title="Kur'an dersleri için kız/erkek ayrımı">
+        <option value="ALL" selected>Tüm Şubeler (Kız + Erkek)</option>
+        <option value="ERKEK">Erkek Şubeleri</option>
+        <option value="KIZ">Kız Şubeleri</option>
+      </select>
+      <span><strong>Müfredat:</strong></span>
+      <select id="selectCurriculum" class="obs-select-mini">
+        <option value="AKTS 2024" selected>AKTS 2024</option>
+        <option value="2021 P.F.">2021 P.F. (4. Sınıf)</option>
+      </select>
+      <span><strong>GNO:</strong></span>
+      <select id="selectGPA" class="obs-select-mini">
+        <option value="NORMAL">Normal (&lt;3.00)</option>
+        <option value="HIGH">Yüksek (≥3.00)</option>
+      </select>
+      <label style="cursor:pointer;" title="Formasyon dersleri normal dönemlik limite sayılmaz">
+        <input type="checkbox" id="chkExcludeFormation" checked> Formasyon Muaf
+      </label>
+      <span id="appBranchSpan" style="display:none;">
+        <span><strong>Staj:</strong></span>
+        <select id="selectAppBranch" class="obs-select-mini">
+          <option value="A">Şube A</option>
+          <option value="B">Şube B</option>
+          <option value="C">Şube C</option>
+          <option value="D">Şube D</option>
+          <option value="E">Şube E</option>
+        </select>
+      </span>
+    </div>
+    <div class="obs-top-right">
+      <button class="btn-obs-messages" id="btnMessages">MESAJLAR (0) Yeni</button>
+    </div>
+  </div>
+
+  <!-- Ana İki Sütunlu Yerleşim (Birebir PDF Sayfa 8 & 13) -->
+  <div class="obs-container" id="obsExportArea">
+
+    <!-- SOL SÜTUN -->
+    <div class="obs-col-left">
+
+      <!-- 1. KUTU: AÇILAN DERSLER -->
+      <div>
+        <div class="obs-section-title">
+          <span>AÇILAN DERSLER</span>
+        </div>
+
+        <div class="obs-dept-row">
+          <select class="obs-select-dept" disabled>
+            <option>İLAHİYAT FAKÜLTESİ</option>
+          </select>
+          <select class="obs-select-dept" disabled>
+            <option>İLAHİYAT LİSANS PROGRAMI</option>
+          </select>
+        </div>
+
+        <div class="obs-radios-row">
+          <div class="obs-radios-list" id="obsGradeRadios">
+            <label><input type="radio" name="gradeRadio" value="1"> 1. Sınıf</label>
+            <label><input type="radio" name="gradeRadio" value="2"> 2. Sınıf</label>
+            <label><input type="radio" name="gradeRadio" value="3" checked> 3. Sınıf</label>
+            <label><input type="radio" name="gradeRadio" value="4"> 4. Sınıf</label>
+            <label><input type="radio" name="gradeRadio" value="5"> 5. Sınıf</label>
+            <label><input type="radio" name="gradeRadio" value="6"> 6. Sınıf</label>
+          </div>
+          <button id="btnOpenNewCourseModal" class="btn-obs-cyan">Yeni Ders Ekle</button>
+        </div>
+
+        <div class="obs-search-row">
+          <span>ARA:</span>
+          <input type="text" id="obsSearchInput" class="obs-search-input" placeholder="Ders adı, kodu veya hoca...">
+          <span id="statOpenCount" style="color:#666; font-size:10px; font-weight:bold;"></span>
+        </div>
+
+        <!-- AÇILAN DERSLER TABLOSU -->
+        <div class="obs-table-box" style="height: 320px;">
+          <table class="obs-data-table" id="tableAcilanDersler">
+            <thead>
+              <tr>
+                <th style="width: 75px;">Ders Kodu</th>
+                <th>DERS ADI</th>
+                <th style="width: 28px;" class="obs-center">Teo</th>
+                <th style="width: 28px;" class="obs-center">Uyg</th>
+                <th style="width: 28px;" class="obs-center">Kre</th>
+                <th style="width: 34px;" class="obs-center">AKTS</th>
+                <th style="width: 44px;" class="obs-center">Blm</th>
+                <th style="width: 42px;" class="obs-center">Blm1-2</th>
+                <th style="width: 28px;" class="obs-center">Dış</th>
+                <th style="width: 140px;">Öğretim Görevlisi</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyAcilanDersler">
+              <!-- JS Dinamik Dolduracak -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 2. KUTU: BAŞARISIZ DERSLER -->
+      <div>
+        <div class="obs-section-title">
+          <span>BAŞARISIZ DERSLER</span>
+          <button id="btnManageFailedCourses" class="btn-obs-cyan" style="font-size: 10px; padding: 2px 8px;">YERİNE Ekle</button>
+        </div>
+
+        <div class="obs-failed-bar">
+          <div class="obs-failed-radios">
+            <label><input type="radio" name="failedRadio" value="UNSELECTED" checked> Seçilmemiş Dersler</label>
+            <label><input type="radio" name="failedRadio" value="ALL_OPEN"> Tüm Eşdeğeri Açılanlar</label>
+            <label><input type="radio" name="failedRadio" value="ALL_FAILED"> Tüm Başarısız Dersler</label>
+          </div>
+        </div>
+
+        <!-- BAŞARISIZ DERSLER TABLOSU -->
+        <div class="obs-table-box" style="height: 180px;">
+          <table class="obs-data-table" id="tableBasarisizDersler">
+            <thead>
+              <tr>
+                <th style="width: 85px;">Ders KODU</th>
+                <th>DERS Adı</th>
+                <th style="width: 45px;" class="obs-center">HARF</th>
+                <th style="width: 160px;">Açılan Dersler</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyBasarisizDersler">
+              <tr>
+                <td colspan="4" class="obs-center" style="padding: 16px; color: #888;">Kayıtlı Ders YOK</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SAĞ SÜTUN -->
+    <div class="obs-col-right">
+
+      <!-- 3. KUTU: ANADAL İÇİN SEÇİLEN DERSLER -->
+      <div>
+        <div class="obs-section-title">
+          <span>ANADAL İÇİN SEÇİLEN DERSLER</span>
+        </div>
+
+        <div class="obs-selected-stats">
+          <span>KREDİ: <strong id="statKredi">0</strong></span>
+          <span style="margin-left: 8px;">AKTS: <strong id="statAKTS">0</strong></span>
+          <span style="margin-left: 12px; color: #555;">Dönem Sınırı: <span id="statLimitText">34 AKTS</span></span>
+          <span style="margin-left: 12px; color: #28a745; font-weight: bold;" id="statCourseCount">0 Ders Seçildi</span>
+        </div>
+
+        <!-- SEÇİLEN DERSLER TABLOSU (Aşağı Kaydırmasız - Tam Görünür) -->
+        <div class="obs-selected-box" id="boxSecilenDersler">
+          <table class="obs-data-table" id="tableSecilenDersler">
+            <thead>
+              <tr>
+                <th style="width: 30px;" class="obs-center">Sil</th>
+                <th style="width: 36px;" class="obs-center">Silme</th>
+                <th style="width: 36px;" class="obs-center">Grup</th>
+                <th style="width: 80px;">Ders Kodu</th>
+                <th>DERS ADI</th>
+                <th style="width: 36px;" class="obs-center">AKTS</th>
+                <th style="width: 36px;" class="obs-center">Kredi</th>
+                <th style="width: 60px;">Yerine</th>
+                <th style="width: 70px;">Yerine Tamir</th>
+              </tr>
+            </thead>
+            <tbody id="tbodySecilenDersler">
+              <tr>
+                <td colspan="9" class="obs-center" style="padding: 16px; color: #888;">Kayıtlı Ders YOK</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- AKSİYON BUTONLARI -->
+        <div class="obs-action-panel">
+          <button id="btnSaveSchedule" class="btn-action-primary">DERSLERİ KAYDET</button>
+          <button id="btnPrintPDF" class="btn-action-gray">🖨️ Yazdır / PDF</button>
+          <button id="btnDownloadPNG" class="btn-action-gray">🖼️ Resim İndir</button>
+          <button id="btnClearAll" class="btn-action-gray" style="color:#d9534f;">Temizle</button>
+        </div>
+      </div>
+
+      <!-- 4. KUTU: DERS PROGRAMI MATRİSİ -->
+      <div>
+        <div class="obs-section-title" style="margin-top: 6px;">
+          <span>DERS PROGRAMI</span>
+        </div>
+
+        <div class="obs-table-box">
+          <table class="obs-timetable-table" id="tableTimetable">
+            <thead>
+              <tr>
+                <th style="width: 48px;">Saat</th>
+                <th>Pazartesi</th>
+                <th>Salı</th>
+                <th>Çarşamba</th>
+                <th>Perşembe</th>
+                <th>Cuma</th>
+                <th>Cumartesi</th>
+                <th>Pazar</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyTimetable">
+              <!-- Saatler 07:00 - 22:00 -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- AÇILIŞ KULLANIM KILAVUZU MODALI (GÖRSELLİ) -->
+  <div id="modalGuide" class="obs-modal-back">
+    <div class="obs-modal-box" style="width: 660px;">
+      <div class="obs-modal-head">
+        <span>📖 ESOGÜ İlahiyat Fakültesi - Ders Seçim & Program Kılavuzu</span>
+        <button id="btnCloseModalGuide" style="background:none; border:none; font-size:18px; cursor:pointer; color:#555;">&times;</button>
+      </div>
+      <div class="obs-modal-content" style="max-height: 72vh;">
+        <p style="margin-bottom: 12px; color: #334155; font-size: 11.5px;">
+          Sisteme hoş geldiniz! Resmi ESOGÜ ÖBS arayüzünde ders seçimi yapar gibi haftalık programınızı çakışmasız hazırlayabilirsiniz. Başlamadan önce aşağıdaki adımları takip ediniz:
+        </p>
+
+        <!-- Kart 1 -->
+        <div class="guide-card" style="border-left-color: #0284c7;">
+          <div class="guide-card-title">
+            <span>🎓</span> 1. ADIM: Üst Panelden Profilinizi Belirleyin
+          </div>
+          <div class="guide-card-desc">
+            • <strong>Sınıf:</strong> Bulunduğunuz sınıfı seçin (1, 2, 3 veya 4. Sınıf).<br>
+            • <strong>Öğretim:</strong> 1. Öğretim, 2. Öğretim veya Karışık (Tümü).<br>
+            • <strong>Cinsiyet:</strong> Kız veya Erkek seçerek <em>Kur'an-ı Kerim</em> derslerindeki şubenizi filtreleyin (A, B, C Kız / D, E Erkek).<br>
+            • <strong>Müfredat & GNO:</strong> AKTS 2024 veya 2021 P.F. şablonu ile GNO kredi limitinizi belirleyin.
+          </div>
+        </div>
+
+        <!-- Kart 2 -->
+        <div class="guide-card" style="border-left-color: #f59e0b;">
+          <div class="guide-card-title">
+            <span>🔄</span> 2. ADIM: Varsa Başarısız / Alttan Derslerinizi Ekleyin
+          </div>
+          <div class="guide-card-desc">
+            • <strong>Zorunlu Alttan:</strong> Sol alttaki <strong>"YERİNE Ekle"</strong> butonuna tıklayarak alt sınıflardan FF kaldığınız zorunlu dersleri seçin.<br>
+            • <strong>Seçmeli Alttan:</strong> Alttan kaç adet seçmeli ders almanız gerektiğini girin. Sol panelden seçmeli ders ekledikçe kalan sayı <em>otomatik olarak düşer</em>!
+          </div>
+        </div>
+
+        <!-- Kart 3 -->
+        <div class="guide-card" style="border-left-color: #10b981;">
+          <div class="guide-card-title">
+            <span>🖱️</span> 3. ADIM: Açılan Derslerden Seçim Yapın
+          </div>
+          <div class="guide-card-desc">
+            • <strong>Tıklayarak Ekle:</strong> "Açılan Dersler" tablosunda istediğiniz derse/şubeye tıklayın; ders anında sağdaki <strong>Ders Programı</strong> tablosuna yeşil renkle yerleşir.<br>
+            • <strong>Şube Değiştirme:</strong> Aynı dersin başka bir şubesine tıklarsanız eski şube otomatik çıkarılıp yeni şube yerleşir.<br>
+            • <strong>Çakışma Kontrolü:</strong> Aynı gün ve saatte ders seçmeye çalışırsanız sistem sizi anında uyarır.<br>
+            • <strong>Seçmeli Dersler:</strong> Seçmeli dersler turuncu <span style="color:#d97706; font-weight:bold;">(Seç)</span> etiketiyle gösterilir ve dönemlik limit kontrolü yapılır.
+          </div>
+        </div>
+
+        <!-- Kart 4 -->
+        <div class="guide-card" style="border-left-color: #6366f1;">
+          <div class="guide-card-title">
+            <span>💾</span> 4. ADIM: Kaydetme, Yazdırma ve İndirme
+          </div>
+          <div class="guide-card-desc">
+            • <strong>Dersleri Kaydet:</strong> Hazırladığınız programı kaydedin.<br>
+            • <strong>🖨️ Yazdır / PDF:</strong> Ders listeniz ve haftalık ders programınız hiçbir kesilme olmadan tam sayfa yazdırılır.<br>
+            • <strong>🖼️ Resim İndir:</strong> Programınızı yüksek çözünürlüklü PNG görseli olarak kaydedin.
+          </div>
+        </div>
+      </div>
+      <div class="obs-modal-foot">
+        <button id="btnStartGuide" class="btn-action-primary" style="font-size:12px; padding:6px 16px;">Anladım, Ders Seçimine Başla</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: BAŞARISIZ DERSLER / SEÇMELİLER -->
+  <div id="modalFailed" class="obs-modal-back">
+    <div class="obs-modal-box">
+      <div class="obs-modal-head">
+        <span>Başarısız Dersler & Seçmeli Havuzu (Tüm Sınıflar)</span>
+        <button id="btnCloseModalFailed" style="background:none; border:none; font-size:16px; cursor:pointer;">&times;</button>
+      </div>
+      <div class="obs-modal-content">
+        <p style="margin-bottom:8px; color:#555;">Başarısız (FF / FD) kaldığınız zorunlu veya seçmeli dersleri belirleyiniz:</p>
+        
+        <div style="background:#f8f9fa; border:1px solid #ddd; padding:8px; margin-bottom:8px; border-radius:2px;">
+          <strong>🔄 Başarısız Seçmeli Ders Sayısı (Alttan):</strong>
+          <div style="display:flex; gap:8px; align-items:center; margin-top:4px;">
+            <select id="modalFailedGrade" class="obs-select-mini">
+              <option value="2">2. Sınıf Seçmeli</option>
+              <option value="3" selected>3. Sınıf Seçmeli</option>
+              <option value="4">4. Sınıf Seçmeli</option>
+            </select>
+            <input type="number" id="modalFailedCount" min="0" max="4" value="0" style="width:60px; padding:2px 4px;">
+            <span style="color:#666;">Adet Alttan Seçmeli (Seçildikçe listeden düşer)</span>
+          </div>
+        </div>
+
+        <div style="margin-top:6px;">
+          <strong>📌 Başarısız Zorunlu Dersler (Tüm Sınıflar):</strong>
+          <input type="text" id="modalFailedSearchInput" placeholder="Zorunlu ders ara (Örn: Tefsir, Hadis, İslam Hukuku, Mantık...)" style="width:100%; padding:3px 6px; font-size:11px; margin-top:4px; margin-bottom:4px; border:1px solid #aaa;">
+          <div id="modalMandatoryList" style="max-height:260px; overflow-y:auto; border:1px solid #ddd; padding:6px; background:#fff;">
+            <!-- JS Dinamik Dolduracak -->
+          </div>
+        </div>
+      </div>
+      <div class="obs-modal-foot">
+        <button id="btnSaveFailedModal" class="btn-obs-cyan">Kaydet</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: YENİ DERS EKLE -->
+  <div id="modalNewCourse" class="obs-modal-back">
+    <div class="obs-modal-box" style="width: 680px;">
+      <div class="obs-modal-head">
+        <span>Açılan Dersler Listesi (Tüm Sınıflar ve Şubeler)</span>
+        <button id="btnCloseModalNewCourse" style="background:none; border:none; font-size:16px; cursor:pointer;">&times;</button>
+      </div>
+      <div class="obs-modal-content">
+        <div style="display:flex; gap:8px; margin-bottom:8px;">
+          <input type="text" id="modalSearchAllInput" placeholder="Ders adı veya kodu ile ara..." style="flex:1; padding:3px 6px;">
+          <select id="modalFilterGrade" class="obs-select-mini">
+            <option value="ALL">Tüm Sınıflar</option>
+            <option value="1">1. Sınıf</option>
+            <option value="2">2. Sınıf</option>
+            <option value="3">3. Sınıf</option>
+            <option value="4">4. Sınıf</option>
+          </select>
+        </div>
+        <div style="max-height:300px; overflow-y:auto; border:1px solid #ddd;">
+          <table class="obs-data-table">
+            <thead>
+              <tr>
+                <th style="width:75px;">Kod</th>
+                <th>Ders Adı</th>
+                <th style="width:35px;" class="obs-center">Sınıf</th>
+                <th style="width:35px;" class="obs-center">Şube</th>
+                <th>Öğretim</th>
+                <th>Öğretim Üyesi</th>
+                <th style="width:60px;" class="obs-center">İşlem</th>
+              </tr>
+            </thead>
+            <tbody id="modalTbodyAllCourses"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/html2canvas.min.js"></script>
+  <script src="data/schedule_data.js"></script>
+  <script src="js/solver.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
