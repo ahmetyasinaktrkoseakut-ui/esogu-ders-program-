@@ -41,9 +41,9 @@ document.addEventListener('DOMContentLoaded', () => {
     showAllBranches: true,
     placedCourses: [],
     failedCourses: [], // Başarısız zorunlu dersler
-    failedElectives: { grade: 3, total: 0 }, // Başarısız seçmeli havuzu
+    failedElectives: { 2: 0, 3: 0, 4: 0 }, // Başarısız seçmeli havuzu (Sınıf bazlı adet)
     searchQuery: '',
-    failedFilterMode: 'UNSELECTED'
+    failedFilterMode: 'ALL_FAILED'
   };
 
   // DOM Elemanları
@@ -87,8 +87,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalFailed = document.getElementById('modalFailed');
   const btnCloseModalFailed = document.getElementById('btnCloseModalFailed');
   const btnSaveFailedModal = document.getElementById('btnSaveFailedModal');
-  const modalFailedGrade = document.getElementById('modalFailedGrade');
-  const modalFailedCount = document.getElementById('modalFailedCount');
+  const modalFailedCount2 = document.getElementById('modalFailedCount2');
+  const modalFailedCount3 = document.getElementById('modalFailedCount3');
+  const modalFailedCount4 = document.getElementById('modalFailedCount4');
+  const modalSelectedFailedChips = document.getElementById('modalSelectedFailedChips');
+  const selectedFailedBadge = document.getElementById('selectedFailedBadge');
   const modalFailedSearchInput = document.getElementById('modalFailedSearchInput');
   const modalMandatoryList = document.getElementById('modalMandatoryList');
 
@@ -348,11 +351,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // SEÇMELİ DERS LİMİTİ KONTROLÜ
     if (course.category === 'SEÇMELİ' && course.code !== '181117069') {
       const grade = course.grade;
-      let maxElective = (grade === 4) ? 1 : (grade === 1 ? 0 : 2);
+      let maxElective = (grade === 4) ? (otherPlaced.some(p => p.code === '181117069') ? 1 : 2) : (grade === 1 ? 0 : 2);
       // Alttan başarısız seçmeli girilmişse limite ekle
-      if (state.failedElectives.grade === grade) {
-        maxElective += state.failedElectives.total;
-      }
+      const extraElectives = (state.failedElectives && state.failedElectives[grade]) || 0;
+      maxElective += extraElectives;
 
       const currentGradeElectives = otherPlaced.filter(p => p.grade === grade && p.category === 'SEÇMELİ' && p.code !== '181117069').length;
       if (currentGradeElectives >= maxElective) {
@@ -462,54 +464,85 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const items = [];
 
-    // Başarısız zorunlu dersler
+    // 1. Başarısız zorunlu dersler (Tüm sınıflardan seçilenler)
     state.failedCourses.forEach(fc => {
-      items.push(fc);
+      const isPlaced = state.placedCourses.some(p => p.code === fc.code || p.name.replace('(İKİNCİ ÖĞRETİM)', '').trim() === fc.name.replace('(İKİNCİ ÖĞRETİM)', '').trim());
+      items.push({
+        ...fc,
+        isPlaced: isPlaced
+      });
     });
 
-    // Başarısız seçmeli ders havuzu (Örn: 3. Sınıftan 2 seçmeli alttan)
-    if (state.failedElectives.total > 0) {
-      const placedCount = state.placedCourses.filter(p => p.grade === state.failedElectives.grade && p.category === 'SEÇMELİ' && p.code !== '181117069').length;
-      const remaining = Math.max(0, state.failedElectives.total - placedCount);
+    // 2. Başarısız seçmeli ders havuzu (2., 3., 4. Sınıf seçmelileri - Her biri ayrı satır!)
+    [2, 3, 4].forEach(g => {
+      const totalForGrade = (state.failedElectives && state.failedElectives[g]) || 0;
+      if (totalForGrade > 0) {
+        const placedCount = state.placedCourses.filter(p => p.grade === g && p.category === 'SEÇMELİ' && p.code !== '181117069').length;
+        for (let i = 1; i <= totalForGrade; i++) {
+          const isDone = (placedCount >= i);
+          items.push({
+            type: 'ELECTIVE_POOL',
+            code: `SEC-${g}-0${i}`,
+            name: `${g}. Sınıf Seçmeli Ders - ${i} (Alttan)`,
+            grade: g,
+            letter: 'FF',
+            isDone: isDone,
+            index: i,
+            totalForGrade: totalForGrade
+          });
+        }
+      }
+    });
 
-      items.push({
-        type: 'ELECTIVE_POOL',
-        code: `SEC-${state.failedElectives.grade}-ALT`,
-        name: `${state.failedElectives.grade}. Sınıf Seçmeli Ders (${state.failedElectives.total} Adet Alttan)`,
-        letter: 'FF',
-        remaining: remaining,
-        total: state.failedElectives.total
+    // Filtreleme: failedFilterMode
+    let visibleItems = items;
+    if (state.failedFilterMode === 'UNSELECTED') {
+      visibleItems = items.filter(item => {
+        if (item.type === 'ELECTIVE_POOL') {
+          return !item.isDone;
+        } else {
+          return !item.isPlaced;
+        }
       });
     }
 
-    if (items.length === 0) {
-      tbodyBasarisizDersler.innerHTML = `<tr><td colspan="4" class="obs-center" style="padding:16px; color:#888;">Kayıtlı Ders YOK</td></tr>`;
+    if (visibleItems.length === 0) {
+      tbodyBasarisizDersler.innerHTML = `<tr><td colspan="4" class="obs-center" style="padding:16px; color:#888;">${items.length === 0 ? 'Kayıtlı Ders YOK' : 'Tüm başarısız dersler programa eklendi.'}</td></tr>`;
       return;
     }
 
-    items.forEach(item => {
+    visibleItems.forEach(item => {
       const tr = document.createElement('tr');
 
       if (item.type === 'ELECTIVE_POOL') {
-        const isDone = (item.remaining === 0);
         tr.innerHTML = `
           <td><strong>${item.code}</strong></td>
           <td><strong>${item.name}</strong></td>
           <td class="obs-center" style="color:#cc0000; font-weight:bold;">${item.letter}</td>
           <td>
-            ${isDone
+            ${item.isDone
               ? '<span style="color:#28a745; font-weight:bold;">✓ Yerine Alındı (Düştü)</span>'
-              : `<span style="color:#cc0000; font-weight:bold;">Kalan: ${item.remaining} Seçmeli Alınmalı</span>`}
+              : `<button class="btn-obs-cyan btn-goto-failed-sec" data-grade="${item.grade}" style="font-size:10px; padding:2px 6px;">Açılanı Bul</button>`}
           </td>
         `;
+
+        const btnGotoSec = tr.querySelector('.btn-goto-failed-sec');
+        if (btnGotoSec) {
+          btnGotoSec.addEventListener('click', () => {
+            state.activeGradeFilter = item.grade;
+            syncGradeRadios();
+            state.searchQuery = 'Seç';
+            obsSearchInput.value = 'Seç';
+            renderAcilanDersler();
+          });
+        }
       } else {
-        const isPlaced = state.placedCourses.some(p => p.code === item.code || p.name.replace('(İKİNCİ ÖĞRETİM)', '').trim() === item.name.replace('(İKİNCİ ÖĞRETİM)', '').trim());
         tr.innerHTML = `
           <td><strong>${item.code}</strong></td>
           <td><strong>${item.name}</strong> (${item.grade}. Sınıf Zorunlu)</td>
           <td class="obs-center" style="color:#cc0000; font-weight:bold;">${item.letter}</td>
           <td>
-            ${isPlaced
+            ${item.isPlaced
               ? '<span style="color:#28a745; font-weight:bold;">✓ Programa Eklendi</span>'
               : `<button class="btn-obs-cyan btn-goto-failed" data-code="${item.code}" style="font-size:10px; padding:2px 6px;">Açılanı Bul</button>`}
           </td>
@@ -677,9 +710,23 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // 14. BAŞARISIZ DERSLER MODAL YÖNETİMİ (TÜM SINIFLARIN ZORUNLU DERSLERİ)
+  const tempSelectedFailedMap = new Map();
+
   btnManageFailedCourses.addEventListener('click', () => {
-    modalFailed.classList.add('show');
+    tempSelectedFailedMap.clear();
+    state.failedCourses.forEach(c => {
+      tempSelectedFailedMap.set(c.code, { ...c });
+    });
+
+    if (modalFailedCount2) modalFailedCount2.value = (state.failedElectives && state.failedElectives[2]) || 0;
+    if (modalFailedCount3) modalFailedCount3.value = (state.failedElectives && state.failedElectives[3]) || 0;
+    if (modalFailedCount4) modalFailedCount4.value = (state.failedElectives && state.failedElectives[4]) || 0;
+
+    if (modalFailedSearchInput) modalFailedSearchInput.value = '';
+
+    updateSelectedFailedChips();
     renderModalMandatoryList();
+    modalFailed.classList.add('show');
   });
 
   btnCloseModalFailed.addEventListener('click', () => {
@@ -689,6 +736,33 @@ document.addEventListener('DOMContentLoaded', () => {
   modalFailedSearchInput?.addEventListener('input', () => {
     renderModalMandatoryList();
   });
+
+  function updateSelectedFailedChips() {
+    if (!modalSelectedFailedChips) return;
+    modalSelectedFailedChips.innerHTML = '';
+    const items = Array.from(tempSelectedFailedMap.values());
+
+    if (selectedFailedBadge) {
+      selectedFailedBadge.textContent = `${items.length} ders seçili`;
+    }
+
+    if (items.length === 0) {
+      modalSelectedFailedChips.innerHTML = '<span style="color:#94a3b8; font-size:10.5px; font-style:italic;">Henüz ders seçilmedi. Aşağıdaki listeden kutucukları işaretleyiniz.</span>';
+      return;
+    }
+
+    items.forEach(it => {
+      const chip = document.createElement('span');
+      chip.style.cssText = 'background:#e0e7ff; color:#3730a3; border:1px solid #c7d2fe; border-radius:12px; font-size:10.5px; font-weight:600; padding:2px 8px; display:inline-flex; align-items:center; gap:5px;';
+      chip.innerHTML = `<span>${it.name} (${it.grade}. Sınıf)</span><span class="chip-remove" style="cursor:pointer; color:#ef4444; font-weight:bold; font-size:13px; line-height:1;" title="Seçimi Kaldır">&times;</span>`;
+      chip.querySelector('.chip-remove').addEventListener('click', () => {
+        tempSelectedFailedMap.delete(it.code);
+        updateSelectedFailedChips();
+        renderModalMandatoryList();
+      });
+      modalSelectedFailedChips.appendChild(chip);
+    });
+  }
 
   function renderModalMandatoryList() {
     modalMandatoryList.innerHTML = '';
@@ -746,7 +820,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       gradeItems.forEach(c => {
         totalRendered++;
-        const isChecked = state.failedCourses.some(f => f.code === c.code || f.name === c.name);
+        const isChecked = tempSelectedFailedMap.has(c.code);
         const label = document.createElement('label');
         label.style.display = 'block';
         label.style.padding = '3px 8px';
@@ -756,6 +830,25 @@ document.addEventListener('DOMContentLoaded', () => {
           <input type="checkbox" value="${c.code}" data-name="${c.name}" data-grade="${c.grade}" ${isChecked ? 'checked' : ''}>
           <span><strong>${c.code}</strong> - ${c.name} <span style="color:#666; font-size:10px;">(${c.akts} AKTS / ${c.kredi} Kredi)</span></span>
         `;
+
+        const chk = label.querySelector('input[type="checkbox"]');
+        chk.addEventListener('change', (e) => {
+          if (e.target.checked) {
+            tempSelectedFailedMap.set(c.code, {
+              type: 'MANDATORY',
+              code: c.code,
+              name: c.name,
+              grade: c.grade,
+              kredi: c.kredi,
+              akts: c.akts,
+              letter: 'FF'
+            });
+          } else {
+            tempSelectedFailedMap.delete(c.code);
+          }
+          updateSelectedFailedChips();
+        });
+
         modalMandatoryList.appendChild(label);
       });
     });
@@ -766,24 +859,25 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   btnSaveFailedModal.addEventListener('click', () => {
-    const checkedBoxes = modalMandatoryList.querySelectorAll('input[type="checkbox"]:checked');
-    state.failedCourses = [];
-    checkedBoxes.forEach(cb => {
-      state.failedCourses.push({
-        type: 'MANDATORY',
-        code: cb.value,
-        name: cb.getAttribute('data-name'),
-        grade: parseInt(cb.getAttribute('data-grade'), 10),
-        letter: 'FF'
-      });
-    });
+    // Hem ekranda görünen hem de arama yapıldığı için gizlenmiş ama seçilmiş olan TÜM dersleri kaydet
+    state.failedCourses = Array.from(tempSelectedFailedMap.values());
 
-    const fCount = parseInt(modalFailedCount.value, 10) || 0;
-    const fGrade = parseInt(modalFailedGrade.value, 10) || 3;
-    state.failedElectives = { grade: fGrade, total: fCount };
+    const c2 = parseInt(modalFailedCount2?.value, 10) || 0;
+    const c3 = parseInt(modalFailedCount3?.value, 10) || 0;
+    const c4 = parseInt(modalFailedCount4?.value, 10) || 0;
+
+    state.failedElectives = { 2: c2, 3: c3, 4: c4 };
 
     modalFailed.classList.remove('show');
     renderBasarisizDersler();
+  });
+
+  // Başarısız dersler radyo filtreleri
+  failedRadios.forEach(r => {
+    r.addEventListener('change', (e) => {
+      state.failedFilterMode = e.target.value;
+      renderBasarisizDersler();
+    });
   });
 
   // 15. YENİ DERS EKLE MODAL YÖNETİMİ

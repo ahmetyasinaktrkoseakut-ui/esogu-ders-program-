@@ -584,6 +584,8 @@ class ScheduleSolver {
 
     if (profile.grade === 3) {
       maxAKTS = 37;
+    } else if (profile.grade === 4) {
+      maxAKTS = 40;
     }
 
     if (profile.gpa_high) {

@@ -808,14 +808,14 @@ body, html {
 
         <div class="obs-failed-bar">
           <div class="obs-failed-radios">
-            <label><input type="radio" name="failedRadio" value="UNSELECTED" checked> Seçilmemiş Dersler</label>
+            <label><input type="radio" name="failedRadio" value="ALL_FAILED" checked> Tüm Başarısız Dersler</label>
+            <label><input type="radio" name="failedRadio" value="UNSELECTED"> Seçilmemiş Dersler</label>
             <label><input type="radio" name="failedRadio" value="ALL_OPEN"> Tüm Eşdeğeri Açılanlar</label>
-            <label><input type="radio" name="failedRadio" value="ALL_FAILED"> Tüm Başarısız Dersler</label>
           </div>
         </div>
 
         <!-- BAŞARISIZ DERSLER TABLOSU -->
-        <div class="obs-table-box" style="height: 180px;">
+        <div class="obs-table-box" style="height: 180px; overflow-y: auto;">
           <table class="obs-data-table" id="tableBasarisizDersler">
             <thead>
               <tr>
@@ -985,31 +985,55 @@ body, html {
 
   <!-- MODAL: BAŞARISIZ DERSLER / SEÇMELİLER -->
   <div id="modalFailed" class="obs-modal-back">
-    <div class="obs-modal-box">
+    <div class="obs-modal-box" style="width: 640px; max-width: 95vw;">
       <div class="obs-modal-head">
         <span>Başarısız Dersler & Seçmeli Havuzu (Tüm Sınıflar)</span>
         <button id="btnCloseModalFailed" style="background:none; border:none; font-size:16px; cursor:pointer;">&times;</button>
       </div>
-      <div class="obs-modal-content">
-        <p style="margin-bottom:8px; color:#555;">Başarısız (FF / FD) kaldığınız zorunlu veya seçmeli dersleri belirleyiniz:</p>
+      <div class="obs-modal-content" style="max-height: 75vh; overflow-y: auto;">
+        <p style="margin-bottom:8px; color:#555; font-size:11.5px;">Başarısız (FF / FD) kaldığınız zorunlu veya seçmeli dersleri belirleyiniz:</p>
         
-        <div style="background:#f8f9fa; border:1px solid #ddd; padding:8px; margin-bottom:8px; border-radius:2px;">
-          <strong>🔄 Başarısız Seçmeli Ders Sayısı (Alttan):</strong>
-          <div style="display:flex; gap:8px; align-items:center; margin-top:4px;">
-            <select id="modalFailedGrade" class="obs-select-mini">
-              <option value="2">2. Sınıf Seçmeli</option>
-              <option value="3" selected>3. Sınıf Seçmeli</option>
-              <option value="4">4. Sınıf Seçmeli</option>
-            </select>
-            <input type="number" id="modalFailedCount" min="0" max="4" value="0" style="width:60px; padding:2px 4px;">
-            <span style="color:#666;">Adet Alttan Seçmeli (Seçildikçe listeden düşer)</span>
+        <div style="background:#f8f9fa; border:1px solid #cbd5e1; padding:10px; margin-bottom:10px; border-radius:4px;">
+          <div style="font-weight:bold; color:#1e293b; margin-bottom:6px; font-size:12px;">
+            🔄 Başarısız Seçmeli Dersler (Alttan):
+          </div>
+          <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
+            <label style="display:flex; align-items:center; gap:6px; font-size:11.5px; cursor:pointer;">
+              <span style="font-weight:bold; color:#334155;">2. Sınıf:</span>
+              <input type="number" id="modalFailedCount2" min="0" max="4" value="0" style="width:52px; padding:3px 6px; border:1px solid #94a3b8; border-radius:3px;">
+              <span style="color:#64748b;">Adet</span>
+            </label>
+            <label style="display:flex; align-items:center; gap:6px; font-size:11.5px; cursor:pointer;">
+              <span style="font-weight:bold; color:#334155;">3. Sınıf:</span>
+              <input type="number" id="modalFailedCount3" min="0" max="4" value="0" style="width:52px; padding:3px 6px; border:1px solid #94a3b8; border-radius:3px;">
+              <span style="color:#64748b;">Adet</span>
+            </label>
+            <label style="display:flex; align-items:center; gap:6px; font-size:11.5px; cursor:pointer;">
+              <span style="font-weight:bold; color:#334155;">4. Sınıf:</span>
+              <input type="number" id="modalFailedCount4" min="0" max="4" value="0" style="width:52px; padding:3px 6px; border:1px solid #94a3b8; border-radius:3px;">
+              <span style="color:#64748b;">Adet</span>
+            </label>
+          </div>
+          <div style="font-size:10.5px; color:#64748b; margin-top:5px;">
+            * Girdiğiniz her seçmeli ders sol alttaki tabloda <strong>ayrı bir satır</strong> olarak listelenir ve programınıza ekledikçe otomatik düşer.
           </div>
         </div>
 
         <div style="margin-top:6px;">
-          <strong>📌 Başarısız Zorunlu Dersler (Tüm Sınıflar):</strong>
-          <input type="text" id="modalFailedSearchInput" placeholder="Zorunlu ders ara (Örn: Tefsir, Hadis, İslam Hukuku, Mantık...)" style="width:100%; padding:3px 6px; font-size:11px; margin-top:4px; margin-bottom:4px; border:1px solid #aaa;">
-          <div id="modalMandatoryList" style="max-height:260px; overflow-y:auto; border:1px solid #ddd; padding:6px; background:#fff;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <span style="font-weight:bold; color:#1e293b; font-size:12px;">📌 Başarısız Zorunlu Dersler (Tüm Sınıflar):</span>
+            <span id="selectedFailedBadge" style="font-size:11px; background:#eff6ff; color:#1d4ed8; font-weight:bold; padding:2px 8px; border-radius:10px; border:1px solid #bfdbfe;">0 ders seçili</span>
+          </div>
+
+          <!-- Seçilen derslerin chip rozetleri -->
+          <div id="modalSelectedFailedChips" style="min-height:28px; background:#f1f5f9; border:1px dashed #cbd5e1; border-radius:4px; padding:4px 6px; margin-bottom:6px; display:flex; flex-wrap:wrap; gap:4px; align-items:center;">
+            <span style="color:#94a3b8; font-size:10.5px; font-style:italic;">Henüz ders seçilmedi. Aşağıdaki listeden kutucukları işaretleyiniz.</span>
+          </div>
+
+          <div style="position:relative;">
+            <input type="text" id="modalFailedSearchInput" placeholder="🔍 Zorunlu ders ara (Örn: Tefsir, Hadis, İslam Hukuku, Mantık...)" style="width:100%; padding:5px 8px; font-size:11px; margin-bottom:4px; border:1px solid #94a3b8; border-radius:3px; outline:none;">
+          </div>
+          <div id="modalMandatoryList" style="max-height:240px; overflow-y:auto; border:1px solid #cbd5e1; padding:4px; background:#fff; border-radius:3px;">
             <!-- JS Dinamik Dolduracak -->
           </div>
         </div>
