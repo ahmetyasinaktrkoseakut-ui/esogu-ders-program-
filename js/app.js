@@ -589,7 +589,46 @@ document.addEventListener('DOMContentLoaded', () => {
     const oldText = btnDownloadPNG.textContent;
     btnDownloadPNG.textContent = 'Resim Hazırlanıyor...';
 
-    const targetEl = document.getElementById('obsExportArea');
+    // PNG İndirme: Banner ve Sağ Panel (Program + Ders Listesi) dahil görsel oluştur
+    let exportWrapper = document.getElementById('pngExportWrapper');
+    if (!exportWrapper) {
+      exportWrapper = document.createElement('div');
+      exportWrapper.id = 'pngExportWrapper';
+      exportWrapper.style.background = '#ffffff';
+      exportWrapper.style.padding = '8px';
+      exportWrapper.style.width = '1100px';
+    }
+
+    const headerBannerClone = document.getElementById('mainHeaderBanner').cloneNode(true);
+    const rightColClone = document.querySelector('.obs-col-right').cloneNode(true);
+    
+    // Geçici dışa aktarım konteyneri
+    const tempContainer = document.createElement('div');
+    tempContainer.style.position = 'absolute';
+    tempContainer.style.left = '-9999px';
+    tempContainer.style.top = '0';
+    tempContainer.style.width = '1100px';
+    tempContainer.style.background = '#ffffff';
+
+    // Seçilen kutudaki kaydırmayı aç
+    const clonedBox = rightColClone.querySelector('#boxSecilenDersler');
+    if (clonedBox) {
+      clonedBox.style.maxHeight = 'none';
+      clonedBox.style.height = 'auto';
+      clonedBox.style.overflow = 'visible';
+    }
+    // Eylem butonlarını kaldır (çıktıda gereksiz)
+    const clonedActions = rightColClone.querySelector('.obs-action-panel');
+    if (clonedActions) clonedActions.style.display = 'none';
+
+    rightColClone.style.width = '100%';
+    headerBannerClone.style.marginBottom = '12px';
+
+    tempContainer.appendChild(headerBannerClone);
+    tempContainer.appendChild(rightColClone);
+    document.body.appendChild(tempContainer);
+
+    const targetEl = tempContainer;
     const selectedBox = document.getElementById('boxSecilenDersler');
 
     // Kaydırmalı alanın tüm dersleri gösterecek şekilde açılması
@@ -621,7 +660,9 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      if (document.body.contains(tempContainer)) document.body.removeChild(tempContainer);
     } catch (err) {
+      if (document.body.contains(tempContainer)) document.body.removeChild(tempContainer);
       console.error(err);
       alert('Resim oluşturulurken hata meydana geldi. Alternatif olarak "Yazdır / PDF" butonunu kullanabilirsiniz.');
     } finally {

@@ -6,6 +6,54 @@
   <title>ogubs1.ogu.edu.tr/DersSecim.aspx | ESOGÜ Ders Kayıt Ekranı</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏛️</text></svg>">
   <style>
+
+/* EN ÜST YATAY ŞIK BANNER */
+.obs-header-banner {
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 45%, #0284c7 100%);
+  color: #ffffff;
+  padding: 12px 20px;
+  border-bottom: 3px solid #f59e0b; /* Altın sarısı zarif hat */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.banner-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  text-align: center;
+  width: 100%;
+}
+
+.banner-icon-left, .banner-icon-right {
+  font-size: 26px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35));
+}
+
+.banner-title {
+  font-size: 14.5px;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #ffffff;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  margin: 0;
+  padding: 0;
+}
+
+.banner-subtitle {
+  font-size: 9.5px;
+  letter-spacing: 1.5px;
+  color: #93c5fd;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+
 /* ESOGÜ ÖBS (ogubs1.ogu.edu.tr/DersSecim.aspx) Birebir Resmi Tasarım */
 * {
   box-sizing: border-box;
@@ -566,6 +614,24 @@ body, html {
 
 /* YAZDIRMA (PRINT / PDF) */
 @media print {
+  .obs-header-banner {
+    display: flex !important;
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 45%, #0284c7 100%) !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color: #ffffff !important;
+    margin-bottom: 12px !important;
+    padding: 10px 16px !important;
+    border-radius: 4px !important;
+  }
+  .banner-title {
+    color: #ffffff !important;
+    font-size: 13px !important;
+  }
+  .banner-subtitle {
+    color: #cbd5e1 !important;
+    font-size: 9px !important;
+  }
   .obs-top-bar, .obs-col-left, .obs-action-panel, .obs-modal-back, .floating-guide-btn {
     display: none !important;
   }
@@ -605,6 +671,18 @@ body, html {
   </button>
 
   <!-- Üst ÖBS Bilgi ve Profil Şeridi -->
+    <!-- EN ÜST YATAY ŞIK BANNER -->
+  <div class="obs-header-banner" id="mainHeaderBanner">
+    <div class="banner-content">
+      <div class="banner-icon-left">🏛️</div>
+      <div class="banner-text-box">
+        <h1 class="banner-title">İLAHİYAT DERS PROGRAMI HAZIRLAMA SİMİLATÖRÜ - AHMET YASİN AKTÜRK</h1>
+        <div class="banner-subtitle">ESOGÜ İLAHİYAT FAKÜLTESİ • 2026-2027 GÜZ DÖNEMİ DERS KAYIT SİSTEMİ</div>
+      </div>
+      <div class="banner-icon-right">🎓</div>
+    </div>
+  </div>
+
   <div class="obs-top-bar">
     <div class="obs-top-left">
       <span class="obs-icon-circle">i</span>
