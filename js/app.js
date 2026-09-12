@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
       gender: 'ALL',        // ALL: Tüm Şubeler (Kız + Erkek)
       gpa_high: false,
       app_branch: 'A',
-      exclude_formation: true
+      exclude_formation: false
     },
     activeGradeFilter: 3,
     showAllBranches: true,
@@ -142,6 +142,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   selectCurriculum.addEventListener('change', (e) => {
     state.profile.curriculum = e.target.value;
+    if (state.profile.curriculum === '2021 P.F.') {
+      state.profile.exclude_formation = true;
+      if (chkExcludeFormation) {
+        chkExcludeFormation.checked = true;
+        chkExcludeFormation.parentElement.title = "2021 P.F. şablonunda formasyon derslerinin krediye etkisi yoktur (22 kredi limitine sayılmaz).";
+      }
+    } else {
+      // AKTS 2024: Formasyon dersleri AKTS hesabına dahil edilir
+      state.profile.exclude_formation = false;
+      if (chkExcludeFormation) {
+        chkExcludeFormation.checked = false;
+        chkExcludeFormation.parentElement.title = "AKTS 2024 şablonunda formasyon dersleri AKTS hesabına dahildir.";
+      }
+    }
     renderAcilanDersler();
     updateStats();
   });
@@ -568,17 +582,27 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateStats() {
     const stats = solver.calculateScheduleStats(state.placedCourses, state.profile);
 
-    const isPF = (state.profile.curriculum === '2021 P.F.' || state.profile.grade === 4);
+    const isPF = (state.profile.curriculum === '2021 P.F.');
     if (isPF) {
-      const total = state.profile.exclude_formation ? stats.totalKredi : stats.grandTotalKredi;
-      statKredi.textContent = total;
-      statAKTS.textContent = stats.totalAKTS;
-      statLimitText.textContent = `${stats.maxKredi} Kredi (Max)`;
+      // 2021 P.F. (Eski Şablon): Formasyon derslerinin krediye etkisi yoktur (22 kredi limitine sayılmaz)
+      statKredi.textContent = stats.formationKredi > 0
+        ? `${stats.effectiveKredi} (+${stats.formationKredi})`
+        : stats.effectiveKredi;
+      statAKTS.textContent = stats.grandTotalAKTS;
+      statLimitText.textContent = `${stats.maxKredi} Kredi (Max) [Formasyon Krediye Etkisiz]`;
     } else {
-      const total = state.profile.exclude_formation ? stats.totalAKTS : stats.grandTotalAKTS;
-      statKredi.textContent = stats.totalKredi;
-      statAKTS.textContent = total;
-      statLimitText.textContent = `${stats.maxAKTS} AKTS (Max)`;
+      // AKTS 2024 (Yeni Şablon): Formasyon dersleri AKTS hesabında sayılır!
+      statKredi.textContent = stats.grandTotalKredi;
+      statAKTS.textContent = stats.effectiveAKTS;
+      statLimitText.textContent = `${stats.maxAKTS} AKTS (Max) [Formasyon Dahil]`;
+    }
+
+    if (stats.isLimitExceeded) {
+      statLimitText.style.color = '#c62828';
+      statLimitText.style.fontWeight = 'bold';
+    } else {
+      statLimitText.style.color = '#555555';
+      statLimitText.style.fontWeight = 'normal';
     }
 
     statCourseCount.textContent = `${state.placedCourses.length} Ders Seçildi`;
@@ -591,7 +615,11 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     const stats = solver.calculateScheduleStats(state.placedCourses, state.profile);
-    alert(`💾 DERS PROGRAMINIZ BAŞARIYLA KAYDEDİLDİ!\n\nToplam Ders Sayısı: ${stats.courseCount}\nToplam Kredi: ${stats.totalKredi}\nToplam AKTS: ${stats.totalAKTS}\nÇakışma: Sıfır (0)`);
+    const isPF = (state.profile.curriculum === '2021 P.F.');
+    const details = isPF
+      ? `Şablon: 2021 P.F. (Eski Şablon)\nSayılan Kredi: ${stats.effectiveKredi} / Max ${stats.maxKredi} Kredi (Formasyon krediye sayılmaz)\nToplam AKTS: ${stats.grandTotalAKTS}`
+      : `Şablon: AKTS 2024 (Yeni Şablon)\nSayılan AKTS: ${stats.effectiveAKTS} / Max ${stats.maxAKTS} AKTS (Formasyon AKTS'de sayılır)\nToplam Kredi: ${stats.grandTotalKredi}`;
+    alert(`💾 DERS PROGRAMINIZ BAŞARIYLA KAYDEDİLDİ!\n\n${details}\nToplam Ders Sayısı: ${stats.courseCount}\nÇakışma: Sıfır (0)`);
   });
 
   // 11. TÜMÜNÜ TEMİZLE

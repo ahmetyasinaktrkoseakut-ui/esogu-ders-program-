@@ -579,13 +579,15 @@ class ScheduleSolver {
     }
 
     // Limitler
-    let maxKredi = 22;
-    let maxAKTS = 34;
+    let maxKredi = profile.gpa_high ? 30 : 22;
+    let maxAKTS = 30;
 
-    if (profile.grade === 3) {
-      maxAKTS = 37;
+    if (profile.grade === 1 || profile.grade === 2) {
+      maxAKTS = 34; // 30 normal + 4 formasyon
+    } else if (profile.grade === 3) {
+      maxAKTS = 37; // 30 normal + 7 formasyon
     } else if (profile.grade === 4) {
-      maxAKTS = 40;
+      maxAKTS = 40; // 30 normal + 10 formasyon
     }
 
     if (profile.gpa_high) {
@@ -594,7 +596,13 @@ class ScheduleSolver {
       maxAKTS = 45;
     }
 
-    const is2021PF = profile.curriculum === '2021 P.F.' || profile.grade === 4;
+    const is2021PF = (profile.curriculum === '2021 P.F.');
+
+    // Yeni Şablon (AKTS 2024): Formasyon dersleri AKTS hesabında sayılır.
+    const effectiveAKTS = (profile.exclude_formation) ? totalAKTS : (totalAKTS + formationAKTS);
+
+    // Eski Şablon (2021 P.F.): Formasyon derslerinin krediye etkisi yoktur (22 kredi limitine sayılmaz).
+    const effectiveKredi = totalKredi;
 
     return {
       courseCount: schedule.length,
@@ -603,13 +611,15 @@ class ScheduleSolver {
       formationKredi,
       formationAKTS,
       formationCount,
+      effectiveKredi,
+      effectiveAKTS,
       // Formasyon dahil toplamlar
       grandTotalKredi: totalKredi + formationKredi,
       grandTotalAKTS: totalAKTS + formationAKTS,
       maxKredi,
       maxAKTS,
       is2021PF,
-      isLimitExceeded: is2021PF ? (totalKredi > maxKredi) : (totalAKTS > maxAKTS)
+      isLimitExceeded: is2021PF ? (effectiveKredi > maxKredi) : (effectiveAKTS > maxAKTS)
     };
   }
 

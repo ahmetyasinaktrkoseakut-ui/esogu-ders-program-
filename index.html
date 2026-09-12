@@ -716,16 +716,16 @@ body, html {
       </select>
       <span><strong>Müfredat:</strong></span>
       <select id="selectCurriculum" class="obs-select-mini">
-        <option value="AKTS 2024" selected>AKTS 2024</option>
-        <option value="2021 P.F.">2021 P.F. (4. Sınıf)</option>
+        <option value="AKTS 2024" selected>AKTS 2024 (Yeni Şablon)</option>
+        <option value="2021 P.F.">2021 P.F. (Eski Şablon)</option>
       </select>
       <span><strong>GNO:</strong></span>
       <select id="selectGPA" class="obs-select-mini">
         <option value="NORMAL">Normal (&lt;3.00)</option>
         <option value="HIGH">Yüksek (≥3.00)</option>
       </select>
-      <label style="cursor:pointer;" title="Formasyon dersleri normal dönemlik limite sayılmaz">
-        <input type="checkbox" id="chkExcludeFormation" checked> Formasyon Muaf
+      <label style="cursor:pointer;" title="AKTS 2024'te formasyon AKTS hesabında sayılır. Muafiyet durumunda işaretleyin.">
+        <input type="checkbox" id="chkExcludeFormation"> Formasyon Muaf
       </label>
       <span id="appBranchSpan" style="display:none;">
         <span><strong>Staj:</strong></span>
@@ -944,7 +944,7 @@ body, html {
             • <strong>Sınıf:</strong> Bulunduğunuz sınıfı seçin (1, 2, 3 veya 4. Sınıf).<br>
             • <strong>Öğretim:</strong> 1. Öğretim, 2. Öğretim veya Karışık (Tümü).<br>
             • <strong>Cinsiyet:</strong> Kız veya Erkek seçerek <em>Kur'an-ı Kerim</em> derslerindeki şubenizi filtreleyin (A, B, C Kız / D, E Erkek).<br>
-            • <strong>Müfredat & GNO:</strong> AKTS 2024 veya 2021 P.F. şablonu ile GNO kredi limitinizi belirleyin.
+            • <strong>Müfredat & Formasyon:</strong> <strong>AKTS 2024 (Yeni Şablon)</strong> seçildiğinde formasyon dersleri AKTS hesabında sayılır. <strong>2021 P.F. (Eski Şablon)</strong> seçildiğinde ise formasyon derslerinin krediye etkisi yoktur (22 kredi limitine sayılmaz).
           </div>
         </div>
 
